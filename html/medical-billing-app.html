@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthcare Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: rgba(255,255,255,0.1);
+            padding: 10px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 15px 30px;
+            border: none;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            font-size: 1.1em;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .tab-button.active {
+            background: white;
+            color: #667eea;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102,126,234,0.4);
+        }
+
+        .btn-secondary {
+            background: #10b981;
+            color: white;
+            margin-left: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+            padding: 8px 15px;
+            font-size: 0.9em;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .medicine-list {
+            margin-top: 30px;
+        }
+
+        .medicine-item {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .medicine-item input {
+            flex: 1;
+        }
+
+        .add-medicine-btn {
+            background: #10b981;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .add-medicine-btn:hover {
+            background: #059669;
+            transform: scale(1.05);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 20px 25px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: slideInRight 0.5s ease;
+            z-index: 1000;
+            max-width: 400px;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .notification.success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .notification.error {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .card {
+                padding: 25px;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏥 Healthcare Management System</h1>
+            <p>Manage medicines and generate medical bills</p>
+        </div>
+        <!-- Global loading overlay (paste after your .container div) -->
+<div id="global-loading-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:2000;align-items:center;justify-content:center;">
+  <div style="background: white; padding: 24px 30px; border-radius:12px; text-align:center; min-width:220px; box-shadow:0 10px 30px rgba(0,0,0,0.4);">
+    <div class="spinner" style="width:48px;height:48px;border-width:5px;border-top-width:5px;margin:0 auto;"></div>
+    <p id="global-loading-text" style="margin-top:12px;color:#333;font-weight:600;">Working…</p>
+  </div>
+</div>
+
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="switchTab('catalog')">📦 Add Medicine</button>
+            <button class="tab-button" onclick="switchTab('billing')">💊 Generate Bill</button>
+        </div>
+
+        <!-- Catalog Tab -->
+        <div id="catalog-tab" class="tab-content active">
+            <div class="card">
+                <h2 style="margin-bottom: 30px; color: #667eea;">Add New Medicine to Catalog</h2>
+                <form id="catalog-form">
+                    <div class="form-group">
+                        <label for="medicine-name">Medicine Name *</label>
+                        <input type="text" id="medicine-name" required placeholder="Enter medicine name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="medicine-description">Description *</label>
+                        <textarea id="medicine-description" required placeholder="Enter medicine description and usage"></textarea>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label for="medicine-price">Price (₹) *</label>
+                            <input type="number" id="medicine-price" step="0.01" required placeholder="0.00">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="medicine-category">Category *</label>
+                            <select id="medicine-category" required>
+                                <option value="">Select category</option>
+                                <option value="Painkiller">Painkiller</option>
+                                <option value="Antibiotic">Antibiotic</option>
+                                <option value="Antiviral">Antiviral</option>
+                                <option value="Vitamin">Vitamin</option>
+                                <option value="Supplement">Supplement</option>
+                                <option value="Antiseptic">Antiseptic</option>
+                                <option value="Fever">Fever</option>
+                                <option value="Digestion">Digestion</option>
+                                <option value="Diabetes">Diabetes</option>
+                                <option value="Blood Pressure">Blood Pressure</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Add Medicine to Catalog</button>
+                </form>
+
+                <div id="catalog-loading" class="loading">
+                    <div class="spinner"></div>
+                    <p style="margin-top: 10px; color: #667eea;">Adding medicine...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Billing Tab -->
+        <div id="billing-tab" class="tab-content">
+            <div class="card">
+                <h2 style="margin-bottom: 30px; color: #667eea;">Generate Medical Bill</h2>
+                <form id="billing-form">
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label for="patient-name">Patient Name *</label>
+                            <input type="text" id="patient-name" required placeholder="Enter patient name">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="patient-age">Age *</label>
+                            <input type="number" id="patient-age" required placeholder="Enter age">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="consultation-type">Consultation Type *</label>
+                        <select id="consultation-type" required>
+                            <option value="">Select consultation type</option>
+                            <option value="General Checkup">General Checkup</option>
+                            <option value="Emergency">Emergency</option>
+                            <option value="Follow-up">Follow-up</option>
+                            <option value="Specialist Consultation">Specialist Consultation</option>
+                            <option value="Routine Checkup">Routine Checkup</option>
+                        </select>
+                    </div>
+
+                    <div class="medicine-list">
+                        <label>Medicines *</label>
+                        <div id="medicine-inputs">
+                            <div class="medicine-item">
+                                <input type="text" class="medicine-input" placeholder="Enter medicine name" required>
+                                <button type="button" class="btn btn-danger" onclick="removeMedicine(this)">Remove</button>
+                            </div>
+                        </div>
+                        <button type="button" class="add-medicine-btn" onclick="addMedicineInput()">+ Add Another Medicine</button>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-primary" style="flex: 1;">Generate Bill (JSON)</button>
+                        <button type="button" class="btn btn-secondary" onclick="generatePDF()">Download PDF</button>
+                        <button type="button" class="btn btn-secondary" onclick="viewPDF()">View PDF</button>
+                    </div>
+                </form>
+
+                <div id="billing-loading" class="loading">
+                    <div class="spinner"></div>
+                    <p style="margin-top: 10px; color: #667eea;">Generating bill...</p>
+                </div>
+
+                <div id="bill-result" style="margin-top: 30px; display: none;">
+                    <h3 style="color: #667eea; margin-bottom: 15px;">Bill Summary</h3>
+                    <div id="bill-content" style="background: #f8f9fa; padding: 20px; border-radius: 10px; white-space: pre-wrap; font-family: monospace; font-size: 0.9em;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration - Update these URLs to match your backend
+        const CATALOG_API_URL = 'https://catlogservice.onrender.com/api/products';
+        const BILLING_API_URL = 'https://billing-0vh0.onrender.com/api/bill';
+        const BILLING_PDF_URL = 'https://billing-0vh0.onrender.com/api/bill/pdf';
+        const BILLING_PDF_VIEW_URL = 'https://billing-0vh0.onrender.com/api/bill/pdf/view';
+
+        // --- Loading helpers ------------------------------------------------
+function showOverlayLoading(text = 'Working...') {
+  const o = document.getElementById('global-loading-overlay');
+  const t = document.getElementById('global-loading-text');
+  if (t) t.textContent = text;
+  if (o) o.style.display = 'flex';
+  // disable pointer events on main container to prevent accidental clicks
+  document.querySelector('.container').style.pointerEvents = 'none';
+}
+
+function hideOverlayLoading() {
+  const o = document.getElementById('global-loading-overlay');
+  if (o) o.style.display = 'none';
+  document.querySelector('.container').style.pointerEvents = 'auto';
+}
+
+function setActionButtonsDisabled(disabled = true) {
+  // disable/enable all primary action buttons so user can't double-click
+  const buttons = document.querySelectorAll('button, input[type="submit"]');
+  buttons.forEach(b => {
+    // keep other UI like remove buttons available? Up to you. Here we disable all to be safe.
+    b.disabled = disabled;
+    if (disabled) b.style.opacity = 0.6;
+    else b.style.opacity = 1;
+  });
+}
+
+
+        // Tab switching
+        function switchTab(tab) {
+            const catalogTab = document.getElementById('catalog-tab');
+            const billingTab = document.getElementById('billing-tab');
+            const buttons = document.querySelectorAll('.tab-button');
+
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            if (tab === 'catalog') {
+                catalogTab.classList.add('active');
+                billingTab.classList.remove('active');
+                buttons[0].classList.add('active');
+            } else {
+                catalogTab.classList.remove('active');
+                billingTab.classList.add('active');
+                buttons[1].classList.add('active');
+            }
+        }
+
+        // Add medicine input field
+        function addMedicineInput() {
+            const container = document.getElementById('medicine-inputs');
+            const div = document.createElement('div');
+            div.className = 'medicine-item';
+            div.innerHTML = `
+                <input type="text" class="medicine-input" placeholder="Enter medicine name" required>
+                <button type="button" class="btn btn-danger" onclick="removeMedicine(this)">Remove</button>
+            `;
+            container.appendChild(div);
+        }
+
+        // Remove medicine input field
+        function removeMedicine(button) {
+            const container = document.getElementById('medicine-inputs');
+            if (container.children.length > 1) {
+                button.parentElement.remove();
+            } else {
+                showNotification('At least one medicine is required', 'error');
+            }
+        }
+
+        // Show notification
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.animation = 'slideInRight 0.5s ease reverse';
+                setTimeout(() => notification.remove(), 500);
+            }, 3000);
+        }
+
+        // Catalog form submission
+        document.getElementById('catalog-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const loading = document.getElementById('catalog-loading');
+            const form = e.target;
+
+            const data = {
+                name: document.getElementById('medicine-name').value,
+                description: document.getElementById('medicine-description').value,
+                price: parseFloat(document.getElementById('medicine-price').value),
+                category: document.getElementById('medicine-category').value
+            };
+
+            try {
+                loading.style.display = 'block';
+                setActionButtonsDisabled(true);
+                form.style.display = 'none';
+
+                const response = await fetch(CATALOG_API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    const result = await response.text();
+                    showNotification(result, 'success');
+                    form.reset();
+                } else {
+                    throw new Error('Failed to add medicine');
+                }
+            } catch (error) {
+                showNotification('Error: ' + error.message, 'error');
+            } finally {
+                loading.style.display = 'none';
+                setActionButtonsDisabled(false);
+                form.style.display = 'block';
+            }
+        });
+
+        // Get medicine list from form
+        function getMedicineList() {
+            const inputs = document.querySelectorAll('.medicine-input');
+            const medicines = [];
+            inputs.forEach(input => {
+                if (input.value.trim()) {
+                    medicines.push({ medicine: input.value.trim() });
+                }
+            });
+            return medicines;
+        }
+
+        // Billing form submission
+        document.getElementById('billing-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const loading = document.getElementById('billing-loading');
+            const form = e.target;
+            const resultDiv = document.getElementById('bill-result');
+            const contentDiv = document.getElementById('bill-content');
+
+            const data = {
+                name: document.getElementById('patient-name').value,
+                age: parseInt(document.getElementById('patient-age').value),
+                consultationtype: document.getElementById('consultation-type').value,
+                requestList: getMedicineList()
+            };
+
+            if (data.requestList.length === 0) {
+                showNotification('Please add at least one medicine', 'error');
+                return;
+            }
+
+            try {
+                loading.style.display = 'block';
+                setActionButtonsDisabled(true);
+                resultDiv.style.display = 'none';
+
+                const response = await fetch(BILLING_API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    contentDiv.textContent = JSON.stringify(result, null, 2);
+                    resultDiv.style.display = 'block';
+                    showNotification('Bill generated successfully!', 'success');
+                } else {
+                    throw new Error('Failed to generate bill');
+                }
+            } catch (error) {
+                showNotification('Error: ' + error.message, 'error');
+            } finally {
+                loading.style.display = 'none';
+                setActionButtonsDisabled(false);
+            }
+        });
+
+        // Generate PDF
+        // Generate PDF (with loading overlay & button-disable)
+async function generatePDF() {
+    const data = {
+        name: document.getElementById('patient-name').value,
+        age: parseInt(document.getElementById('patient-age').value),
+        consultationtype: document.getElementById('consultation-type').value,
+        requestList: getMedicineList()
+    };
+
+    if (!data.name || !data.age || !data.consultationtype || data.requestList.length === 0) {
+        showNotification('Please fill all fields before generating PDF', 'error');
+        return;
+    }
+
+    try {
+        showOverlayLoading('Generating PDF...');
+        setActionButtonsDisabled(true);
+
+        const response = await fetch(BILLING_PDF_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+
+        if (!response.ok) {
+            // try to parse error message if server returned JSON
+            let msg = 'Failed to generate PDF';
+            try {
+                const err = await response.json();
+                if (err && err.message) msg = err.message;
+            } catch (e) {}
+            throw new Error(msg + ' (status ' + response.status + ')');
+        }
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `medical_bill_${data.name.replace(/\s+/g, '_')}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        a.remove();
+        showNotification('PDF downloaded successfully!', 'success');
+    } catch (error) {
+        console.error('generatePDF error:', error);
+        showNotification('Error: ' + error.message, 'error');
+    } finally {
+        hideOverlayLoading();
+        setActionButtonsDisabled(false);
+    }
+}
+
+
+        // View PDF
+        // View PDF (with loading overlay & button-disable)
+async function viewPDF() {
+    const data = {
+        name: document.getElementById('patient-name').value,
+        age: parseInt(document.getElementById('patient-age').value),
+        consultationtype: document.getElementById('consultation-type').value,
+        requestList: getMedicineList()
+    };
+
+    if (!data.name || !data.age || !data.consultationtype || data.requestList.length === 0) {
+        showNotification('Please fill all fields before viewing PDF', 'error');
+        return;
+    }
+
+    try {
+        showOverlayLoading('Preparing PDF preview...');
+        setActionButtonsDisabled(true);
+
+        const response = await fetch(BILLING_PDF_VIEW_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+
+        if (!response.ok) {
+            let msg = 'Failed to view PDF';
+            try {
+                const err = await response.json();
+                if (err && err.message) msg = err.message;
+            } catch (e) {}
+            throw new Error(msg + ' (status ' + response.status + ')');
+        }
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        window.open(url, '_blank');
+        showNotification('PDF opened in new tab!', 'success');
+    } catch (error) {
+        console.error('viewPDF error:', error);
+        showNotification('Error: ' + error.message, 'error');
+    } finally {
+        hideOverlayLoading();
+        setActionButtonsDisabled(false);
+    }
+}
+
+    </script>
+</body>
+</html>
