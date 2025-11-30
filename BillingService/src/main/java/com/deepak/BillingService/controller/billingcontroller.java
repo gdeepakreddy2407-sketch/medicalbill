@@ -54,4 +54,8 @@ public class billingcontroller {
 
         return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
     }
+    @GetMapping("/health")
+    public ResponseEntity<String> health() {
+    return ResponseEntity.ok("OK");
+}
 }
